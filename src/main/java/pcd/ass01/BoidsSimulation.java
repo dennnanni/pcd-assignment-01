@@ -1,5 +1,7 @@
 package pcd.ass01;
 
+import javax.swing.*;
+
 public class BoidsSimulation {
 
 	final static int N_BOIDS = 1500;
@@ -18,17 +20,31 @@ public class BoidsSimulation {
 	final static int SCREEN_HEIGHT = 800; 
 	
 
-    public static void main(String[] args) {      
-    	var model = new BoidsModel(
-    					N_BOIDS, 
-    					SEPARATION_WEIGHT, ALIGNMENT_WEIGHT, COHESION_WEIGHT, 
-    					ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
-    					MAX_SPEED,
-    					PERCEPTION_RADIUS,
-    					AVOID_RADIUS); 
-    	var sim = new BoidsSimulator(model);
-    	var view = new BoidsView(model, SCREEN_WIDTH, SCREEN_HEIGHT);
-    	sim.attachView(view);
-    	sim.runSimulation();
+    public static void main(String[] args) {
+
+		String input = JOptionPane.showInputDialog(null, "Insert boids count:", "Configuration", JOptionPane.QUESTION_MESSAGE);
+
+		try {
+			int boids;
+			if (input == null) {
+				boids = N_BOIDS;
+			} else {
+				boids = Integer.parseInt(input);
+			}
+
+			var model = new BoidsModel(
+					boids,
+					SEPARATION_WEIGHT, ALIGNMENT_WEIGHT, COHESION_WEIGHT,
+					ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
+					MAX_SPEED,
+					PERCEPTION_RADIUS,
+					AVOID_RADIUS);
+			var sim = new BoidsSimulator(model);
+			var view = new BoidsView(model, SCREEN_WIDTH, SCREEN_HEIGHT);
+			sim.attachView(view);
+			sim.runSimulation();
+		} catch (Exception ex) {
+			System.out.println("Input error: integer required");
+		}
     }
 }

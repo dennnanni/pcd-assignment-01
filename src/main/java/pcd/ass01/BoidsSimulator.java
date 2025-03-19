@@ -13,6 +13,10 @@ public class BoidsSimulator {
     public BoidsSimulator(BoidsModel model) {
         this.model = model;
         view = Optional.empty();
+
+        /*
+        Qui magari mettiamo la creazione degli agenti che si muovono?
+         */
     }
 
     public void attachView(BoidsView view) {
@@ -43,7 +47,9 @@ public class BoidsSimulator {
                 boid.updatePos(model);
             }
 
-            
+            // Qui ci deve essere un meccanismo di sincronizzazione perché tutti i boid devono
+            // aver finito gli aggiornamenti prima di poter disegnare l'interfaccia e capire se
+            // bisogna aspettare per iniziare il ciclo successivo.
     		if (view.isPresent()) {
             	view.get().update(framerate);
             	var t1 = System.currentTimeMillis();
