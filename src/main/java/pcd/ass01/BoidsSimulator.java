@@ -4,17 +4,19 @@ import java.util.Optional;
 
 public class BoidsSimulator {
 
-    private final SimulationStateMonitor monitor;
+    private final SimulationStateMonitor stateMonitor;
+    private final SyncBoidsAgents workersMonitor;
     private BoidsModel model;
     private Optional<BoidsView> view;
     
     private static final int FRAMERATE = 25;
     private int framerate;
     
-    public BoidsSimulator(BoidsModel model, SimulationStateMonitor monitor) {
+    public BoidsSimulator(BoidsModel model, SimulationStateMonitor stateMonitor, SyncBoidsAgents workersMonitor) {
         this.model = model;
         view = Optional.empty();
-        this.monitor = monitor;
+        this.stateMonitor = stateMonitor;
+        this.workersMonitor = workersMonitor;
 
         /*
         Qui magari mettiamo la creazione degli agenti che si muovono?
@@ -27,28 +29,10 @@ public class BoidsSimulator {
       
     public void runSimulation() {
     	while (true) {
-            this.monitor.waitIfPaused();
+            stateMonitor.waitIfPaused();
             var t0 = System.currentTimeMillis();
-    		var boids = model.getBoids();
-    		/*
-    		for (Boid boid : boids) {
-                boid.update(model);
-            }
-            */
-    		
-    		/* 
-    		 * Improved correctness: first update velocities...
-    		 */
-    		for (Boid boid : boids) {
-                boid.updateVelocity(model);
-            }
 
-    		/* 
-    		 * ..then update positions
-    		 */
-    		for (Boid boid : boids) {
-                boid.updatePos(model);
-            }
+            workersMonitor.waitWorkers();
 
             // Qui ci deve essere un meccanismo di sincronizzazione perché tutti i boid devono
             // aver finito gli aggiornamenti prima di poter disegnare l'interfaccia e capire se
@@ -68,6 +52,8 @@ public class BoidsSimulator {
                 	framerate = (int) (1000/dtElapsed);
                 }
     		}
+
+            workersMonitor.coordinatorDone();
             
     	}
     }

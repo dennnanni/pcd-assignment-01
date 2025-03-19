@@ -32,7 +32,9 @@ public class BoidsSimulation {
 				boids = Integer.parseInt(input);
 			}
 
-			SimulationStateMonitor startMonitor = new SimulationStateMonitor(false);
+			SimulationStateMonitor stateMonitor = new SimulationStateMonitor(false);
+			SyncBoidsAgents syncMonitor = new SyncBoidsAgents(1);
+
 
 			var model = new BoidsModel(
 					boids,
@@ -41,9 +43,11 @@ public class BoidsSimulation {
 					MAX_SPEED,
 					PERCEPTION_RADIUS,
 					AVOID_RADIUS);
-			var sim = new BoidsSimulator(model, startMonitor);
-			var view = new BoidsView(model, startMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
+			Agent worker = new Agent(model, stateMonitor, syncMonitor);
+			var sim = new BoidsSimulator(model, stateMonitor, syncMonitor);
+			var view = new BoidsView(model, stateMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
 			sim.attachView(view);
+			worker.start();
 			sim.runSimulation();
 		} catch (Exception ex) {
 			System.out.println("Input error: integer required");
