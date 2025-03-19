@@ -1,6 +1,7 @@
 package pcd.ass01;
 
 import javax.swing.*;
+import java.util.concurrent.CyclicBarrier;
 
 public class BoidsSimulation {
 
@@ -26,14 +27,14 @@ public class BoidsSimulation {
 
 		try {
 			int boids;
-			if (input == null) {
+			if (input.isEmpty()) {
 				boids = N_BOIDS;
 			} else {
 				boids = Integer.parseInt(input);
 			}
 
 			SimulationStateMonitor stateMonitor = new SimulationStateMonitor(false);
-			SyncWorkersMonitor syncMonitor = new SyncWorkersMonitor(1);
+			SyncWorkersMonitor syncMonitor = new SyncWorkersMonitor(boids);
 
 
 			var model = new BoidsModel(
@@ -43,11 +44,17 @@ public class BoidsSimulation {
 					MAX_SPEED,
 					PERCEPTION_RADIUS,
 					AVOID_RADIUS);
-			Worker worker = new Worker(model, stateMonitor, syncMonitor);
 			var sim = new BoidsSimulator(model, stateMonitor, syncMonitor);
 			var view = new BoidsView(model, stateMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
 			sim.attachView(view);
-			worker.start();
+
+			CyclicBarrier barrier = new CyclicBarrier(boids);
+
+			for (int i = 0; i < boids; i++) {
+				Worker worker = new Worker(i, model, stateMonitor, barrier, syncMonitor);
+				worker.start();
+			}
+
 			sim.runSimulation();
 		} catch (Exception ex) {
 			System.out.println("Input error: integer required");

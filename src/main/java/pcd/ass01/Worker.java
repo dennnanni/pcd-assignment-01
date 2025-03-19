@@ -1,13 +1,25 @@
 package pcd.ass01;
 
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+
 public class Worker extends Thread {
 
     private final BoidsModel model;
     private final SimulationStateMonitor stateMonitor;
     private final SyncWorkersMonitor coordinatorMonitor;
+    private final CyclicBarrier barrier;
 
-    public Worker(BoidsModel model, SimulationStateMonitor stateMonitor, SyncWorkersMonitor coordinatorMonitor){
+    private final int boidIndex;
+
+    public Worker(int boidIndex,
+                  BoidsModel model,
+                  SimulationStateMonitor stateMonitor,
+                  CyclicBarrier barrier,
+                  SyncWorkersMonitor coordinatorMonitor){
+        this.boidIndex = boidIndex;
         this.model = model;
+        this.barrier = barrier;
         this.stateMonitor = stateMonitor;
         this.coordinatorMonitor = coordinatorMonitor;
     }
@@ -16,20 +28,20 @@ public class Worker extends Thread {
     public void run() {
         while (true) {
             stateMonitor.waitIfPaused();
-            var boids = model.getBoids();
+            var boid = model.getBoidWithIndex(boidIndex);
 
-            for (Boid boid : boids) {
-                boid.updateVelocity(model);
-            }
+            boid.updateVelocity(model);
 
             // Barriera 1
+            try {
+                barrier.await();
+            } catch (InterruptedException | BrokenBarrierException ex) {
 
-            for (Boid boid : boids) {
-                boid.updatePos(model);
             }
 
-            coordinatorMonitor.workDoneWaitCoordinator();
+            boid.updatePos(model);
 
+            coordinatorMonitor.workDoneWaitCoordinator();
         }
     }
 }

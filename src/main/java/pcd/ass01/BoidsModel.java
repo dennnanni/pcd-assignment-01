@@ -46,6 +46,14 @@ public class BoidsModel {
     public synchronized List<Boid> getBoids(){
     	return boids;
     }
+
+    public synchronized Boid getBoidWithIndex(int i) {
+        if (i >= 0 && i < boids.size()) {
+            return boids.get(i);
+        }
+
+        return null;
+    }
     
     public synchronized double getMinX() {
     	return -width/2;
