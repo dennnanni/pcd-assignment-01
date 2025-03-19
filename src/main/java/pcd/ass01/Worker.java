@@ -1,12 +1,12 @@
 package pcd.ass01;
 
-public class Agent extends Thread {
+public class Worker extends Thread {
 
     private final BoidsModel model;
     private final SimulationStateMonitor stateMonitor;
-    private final SyncBoidsAgents coordinatorMonitor;
+    private final SyncWorkersMonitor coordinatorMonitor;
 
-    public Agent(BoidsModel model, SimulationStateMonitor stateMonitor, SyncBoidsAgents coordinatorMonitor){
+    public Worker(BoidsModel model, SimulationStateMonitor stateMonitor, SyncWorkersMonitor coordinatorMonitor){
         this.model = model;
         this.stateMonitor = stateMonitor;
         this.coordinatorMonitor = coordinatorMonitor;

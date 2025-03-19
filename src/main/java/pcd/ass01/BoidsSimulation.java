@@ -33,7 +33,7 @@ public class BoidsSimulation {
 			}
 
 			SimulationStateMonitor stateMonitor = new SimulationStateMonitor(false);
-			SyncBoidsAgents syncMonitor = new SyncBoidsAgents(1);
+			SyncWorkersMonitor syncMonitor = new SyncWorkersMonitor(1);
 
 
 			var model = new BoidsModel(
@@ -43,7 +43,7 @@ public class BoidsSimulation {
 					MAX_SPEED,
 					PERCEPTION_RADIUS,
 					AVOID_RADIUS);
-			Agent worker = new Agent(model, stateMonitor, syncMonitor);
+			Worker worker = new Worker(model, stateMonitor, syncMonitor);
 			var sim = new BoidsSimulator(model, stateMonitor, syncMonitor);
 			var view = new BoidsView(model, stateMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
 			sim.attachView(view);

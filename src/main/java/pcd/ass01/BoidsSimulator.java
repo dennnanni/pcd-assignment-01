@@ -5,14 +5,14 @@ import java.util.Optional;
 public class BoidsSimulator {
 
     private final SimulationStateMonitor stateMonitor;
-    private final SyncBoidsAgents workersMonitor;
+    private final SyncWorkersMonitor workersMonitor;
     private BoidsModel model;
     private Optional<BoidsView> view;
     
     private static final int FRAMERATE = 25;
     private int framerate;
     
-    public BoidsSimulator(BoidsModel model, SimulationStateMonitor stateMonitor, SyncBoidsAgents workersMonitor) {
+    public BoidsSimulator(BoidsModel model, SimulationStateMonitor stateMonitor, SyncWorkersMonitor workersMonitor) {
         this.model = model;
         view = Optional.empty();
         this.stateMonitor = stateMonitor;

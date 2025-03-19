@@ -4,7 +4,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class SyncBoidsAgents {
+public class SyncWorkersMonitor {
 
     private final Lock lock = new ReentrantLock();
     private final Condition workersDone = lock.newCondition();
@@ -14,10 +14,9 @@ public class SyncBoidsAgents {
     private int nWorkersDone;
     private boolean coordinatorWorking;
 
-    public SyncBoidsAgents(int nWorkers) {
+    public SyncWorkersMonitor(int nWorkers) {
         this.nWorkers = nWorkers;
     }
-
 
     public void waitWorkers() {
         lock.lock();
