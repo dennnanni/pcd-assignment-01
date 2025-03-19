@@ -11,13 +11,16 @@ public class Worker extends Thread {
     private final CyclicBarrier barrier;
 
     private final int boidIndex;
+    private final int controlledBoids;
 
     public Worker(int boidIndex,
+                  int controlledBoids,
                   BoidsModel model,
                   SimulationStateMonitor stateMonitor,
                   CyclicBarrier barrier,
                   SyncWorkersMonitor coordinatorMonitor){
         this.boidIndex = boidIndex;
+        this.controlledBoids = controlledBoids;
         this.model = model;
         this.barrier = barrier;
         this.stateMonitor = stateMonitor;
@@ -28,9 +31,11 @@ public class Worker extends Thread {
     public void run() {
         while (true) {
             stateMonitor.waitIfPaused();
-            var boid = model.getBoidWithIndex(boidIndex);
+            var boids = model.getBoids();
 
-            boid.updateVelocity(model);
+            for (int i = boidIndex; i < boidIndex + controlledBoids; i++) {
+                boids.get(i).updateVelocity(model);
+            }
 
             // Barriera 1
             try {
@@ -39,7 +44,9 @@ public class Worker extends Thread {
 
             }
 
-            boid.updatePos(model);
+            for (int i = boidIndex; i < boidIndex + controlledBoids; i++) {
+                boids.get(i).updatePos(model);
+            }
 
             coordinatorMonitor.workDoneWaitCoordinator();
         }

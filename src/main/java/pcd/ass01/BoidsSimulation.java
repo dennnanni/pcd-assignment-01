@@ -18,10 +18,11 @@ public class BoidsSimulation {
     static final double AVOID_RADIUS = 20.0;
 
 	final static int SCREEN_WIDTH = 800; 
-	final static int SCREEN_HEIGHT = 800; 
-	
+	final static int SCREEN_HEIGHT = 800;
+	public static final int DIVISION_FACTOR = 100;
 
-    public static void main(String[] args) {
+
+	public static void main(String[] args) {
 
 		String input = JOptionPane.showInputDialog(null, "Insert boids count:", "Configuration", JOptionPane.QUESTION_MESSAGE);
 
@@ -33,8 +34,9 @@ public class BoidsSimulation {
 				boids = Integer.parseInt(input);
 			}
 
+			int nWorkers = boids / DIVISION_FACTOR + (boids % DIVISION_FACTOR != 0 ? 1 : 0);
 			SimulationStateMonitor stateMonitor = new SimulationStateMonitor(false);
-			SyncWorkersMonitor syncMonitor = new SyncWorkersMonitor(boids);
+			SyncWorkersMonitor syncMonitor = new SyncWorkersMonitor(nWorkers);
 
 
 			var model = new BoidsModel(
@@ -48,10 +50,11 @@ public class BoidsSimulation {
 			var view = new BoidsView(model, stateMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
 			sim.attachView(view);
 
-			CyclicBarrier barrier = new CyclicBarrier(boids);
+			CyclicBarrier barrier = new CyclicBarrier(nWorkers);
 
-			for (int i = 0; i < boids; i++) {
-				Worker worker = new Worker(i, model, stateMonitor, barrier, syncMonitor);
+			for (int i = 0; i < boids; i += DIVISION_FACTOR) {
+				int controlledBoids = (boids - i) % DIVISION_FACTOR != 0 ? (boids - i) : DIVISION_FACTOR;
+				Worker worker = new Worker(i, controlledBoids, model, stateMonitor, barrier, syncMonitor);
 				worker.start();
 			}
 
