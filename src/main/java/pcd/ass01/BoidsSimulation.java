@@ -32,6 +32,8 @@ public class BoidsSimulation {
 				boids = Integer.parseInt(input);
 			}
 
+			SimulationStateMonitor startMonitor = new SimulationStateMonitor(false);
+
 			var model = new BoidsModel(
 					boids,
 					SEPARATION_WEIGHT, ALIGNMENT_WEIGHT, COHESION_WEIGHT,
@@ -39,8 +41,8 @@ public class BoidsSimulation {
 					MAX_SPEED,
 					PERCEPTION_RADIUS,
 					AVOID_RADIUS);
-			var sim = new BoidsSimulator(model);
-			var view = new BoidsView(model, SCREEN_WIDTH, SCREEN_HEIGHT);
+			var sim = new BoidsSimulator(model, startMonitor);
+			var view = new BoidsView(model, startMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
 			sim.attachView(view);
 			sim.runSimulation();
 		} catch (Exception ex) {

@@ -4,15 +4,17 @@ import java.util.Optional;
 
 public class BoidsSimulator {
 
+    private final SimulationStateMonitor monitor;
     private BoidsModel model;
     private Optional<BoidsView> view;
     
     private static final int FRAMERATE = 25;
     private int framerate;
     
-    public BoidsSimulator(BoidsModel model) {
+    public BoidsSimulator(BoidsModel model, SimulationStateMonitor monitor) {
         this.model = model;
         view = Optional.empty();
+        this.monitor = monitor;
 
         /*
         Qui magari mettiamo la creazione degli agenti che si muovono?
@@ -25,6 +27,7 @@ public class BoidsSimulator {
       
     public void runSimulation() {
     	while (true) {
+            this.monitor.waitIfPaused();
             var t0 = System.currentTimeMillis();
     		var boids = model.getBoids();
     		/*

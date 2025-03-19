@@ -9,14 +9,16 @@ import java.util.Hashtable;
 
 public class BoidsView implements ChangeListener {
 
+	private final SimulationStateMonitor monitor;
 	private JFrame frame;
 	private BoidsPanel boidsPanel;
 	private JSlider cohesionSlider, separationSlider, alignmentSlider;
 	private BoidsModel model;
 	private int width, height;
 	
-	public BoidsView(BoidsModel model, int width, int height) {
+	public BoidsView(BoidsModel model, SimulationStateMonitor monitor, int width, int height) {
 		this.model = model;
+		this.monitor = monitor;
 		this.width = width;
 		this.height = height;
 		
@@ -32,11 +34,24 @@ public class BoidsView implements ChangeListener {
 		cp.add(BorderLayout.CENTER, boidsPanel);
 
         JPanel slidersPanel = new JPanel();
-        
+
+		JButton pauseButton = new JButton("Pause");
+		pauseButton.addActionListener(e -> {
+			if (monitor.isPaused()) {
+				monitor.resume();
+				pauseButton.setText("Pause");
+			} else {
+				monitor.pause();
+				pauseButton.setText("Resume");
+			}
+		});
+
+        slidersPanel.add(pauseButton);
+
         cohesionSlider = makeSlider();
         separationSlider = makeSlider();
         alignmentSlider = makeSlider();
-        
+
         slidersPanel.add(new JLabel("Separation"));
         slidersPanel.add(separationSlider);
         slidersPanel.add(new JLabel("Alignment"));
