@@ -19,7 +19,7 @@ public class BoidsSimulation {
 
 	final static int SCREEN_WIDTH = 800; 
 	final static int SCREEN_HEIGHT = 800;
-	public static final int DIVISION_FACTOR = 100;
+	public static final int DIVISION_FACTOR = 200;
 
 
 	public static void main(String[] args) {

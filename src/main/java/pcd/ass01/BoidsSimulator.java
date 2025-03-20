@@ -17,10 +17,6 @@ public class BoidsSimulator {
         view = Optional.empty();
         this.stateMonitor = stateMonitor;
         this.workersMonitor = workersMonitor;
-
-        /*
-        Qui magari mettiamo la creazione degli agenti che si muovono?
-         */
     }
 
     public void attachView(BoidsView view) {
@@ -34,16 +30,13 @@ public class BoidsSimulator {
 
             workersMonitor.waitWorkers();
 
-            // Qui ci deve essere un meccanismo di sincronizzazione perché tutti i boid devono
-            // aver finito gli aggiornamenti prima di poter disegnare l'interfaccia e capire se
-            // bisogna aspettare per iniziare il ciclo successivo.
     		if (view.isPresent()) {
-            	view.get().update(framerate);
+                view.get().update(framerate);
             	var t1 = System.currentTimeMillis();
                 var dtElapsed = t1 - t0;
                 var framratePeriod = 1000/FRAMERATE;
-                
-                if (dtElapsed < framratePeriod) {		
+
+                if (dtElapsed < framratePeriod) {
                 	try {
                 		Thread.sleep(framratePeriod - dtElapsed);
                 	} catch (Exception ex) {}
@@ -54,7 +47,7 @@ public class BoidsSimulator {
     		}
 
             workersMonitor.coordinatorDone();
-            
+
     	}
     }
 }
