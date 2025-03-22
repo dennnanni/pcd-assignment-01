@@ -7,7 +7,8 @@ import java.util.Optional;
 public class BoidsModel {
     
     private final List<Boid> boids;
-    private double separationWeight; 
+    private List<Boid> boidsCopy;
+    private double separationWeight;
     private double alignmentWeight; 
     private double cohesionWeight; 
     private final double width;
@@ -41,6 +42,7 @@ public class BoidsModel {
         	boids.add(new Boid(pos, vel));
         }
 
+        makeCopy();
     }
     
     public List<Boid> getBoids(){
@@ -105,5 +107,17 @@ public class BoidsModel {
 
     public double getPerceptionRadius() {
     	return perceptionRadius;
+    }
+
+    public void makeCopy() {
+        List<Boid> copy = new ArrayList<>();
+        for (Boid b : boids) {
+            copy.add(b.clone());
+        }
+        boidsCopy = copy;
+    }
+
+    public List<Boid> getBoidsCopy() {
+        return boidsCopy;
     }
 }
