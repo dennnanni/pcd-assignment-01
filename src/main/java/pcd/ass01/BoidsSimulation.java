@@ -34,7 +34,7 @@ public class BoidsSimulation {
 				boids = Integer.parseInt(input);
 			}
 
-			int nWorkers = boids / DIVISION_FACTOR + (boids % DIVISION_FACTOR != 0 ? 1 : 0);
+			int nWorkers = (int) Math.ceil(boids / (double) DIVISION_FACTOR);
 			SimulationStateMonitor stateMonitor = new SimulationStateMonitor(false);
 			SyncWorkersMonitor syncMonitor = new SyncWorkersMonitor(nWorkers);
 
