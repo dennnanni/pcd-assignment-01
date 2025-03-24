@@ -26,7 +26,7 @@ public class BoidsSimulation {
 
 		try {
 			int boids;
-			if (input == null) {
+			if (input.isEmpty()) {
 				boids = N_BOIDS;
 			} else {
 				boids = Integer.parseInt(input);
