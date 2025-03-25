@@ -30,7 +30,7 @@ public class BoidsPanel extends JPanel {
         // var envHeight = model.getHeight();
         // var yScale = h/envHeight;
 
-        var boids = model.getBoids();
+        var boids = model.getBoidsCopy();
 
         g.setColor(Color.BLUE);
         for (Boid boid : boids) {

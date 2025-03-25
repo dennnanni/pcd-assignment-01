@@ -7,7 +7,8 @@ import java.util.Optional;
 public class BoidsModel {
     
     private final List<Boid> boids;
-    private double separationWeight; 
+    private List<Boid> boidsCopy;
+    private double separationWeight;
     private double alignmentWeight; 
     private double cohesionWeight; 
     private final double width;
@@ -41,9 +42,10 @@ public class BoidsModel {
         	boids.add(new Boid(pos, vel));
         }
 
+        makeCopy();
     }
     
-    public List<Boid> getBoids(){
+    public synchronized List<Boid> getBoids(){
     	return boids;
     }
     
@@ -71,27 +73,27 @@ public class BoidsModel {
     	return height;
     }
 
-    public void setSeparationWeight(double value) {
+    public synchronized void setSeparationWeight(double value) {
     	this.separationWeight = value;
     }
 
-    public void setAlignmentWeight(double value) {
+    public synchronized void setAlignmentWeight(double value) {
     	this.alignmentWeight = value;
     }
 
-    public void setCohesionWeight(double value) {
+    public synchronized void setCohesionWeight(double value) {
     	this.cohesionWeight = value;
     }
 
-    public double getSeparationWeight() {
+    public synchronized double getSeparationWeight() {
     	return separationWeight;
     }
 
-    public double getCohesionWeight() {
+    public synchronized double getCohesionWeight() {
     	return cohesionWeight;
     }
 
-    public double getAlignmentWeight() {
+    public synchronized double getAlignmentWeight() {
     	return alignmentWeight;
     }
     
@@ -105,5 +107,17 @@ public class BoidsModel {
 
     public double getPerceptionRadius() {
     	return perceptionRadius;
+    }
+
+    public void makeCopy() {
+        List<Boid> copy = new ArrayList<>();
+        for (Boid b : boids) {
+            copy.add(b.clone());
+        }
+        boidsCopy = copy;
+    }
+
+    public List<Boid> getBoidsCopy() {
+        return boidsCopy;
     }
 }
