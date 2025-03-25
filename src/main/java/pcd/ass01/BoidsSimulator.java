@@ -58,6 +58,8 @@ public class BoidsSimulator {
 
             }
 
+            model.makeCopy();
+
     		if (view.isPresent()) {
             	view.get().update(framerate);
             	var t1 = System.currentTimeMillis();

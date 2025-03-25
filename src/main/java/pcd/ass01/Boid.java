@@ -161,4 +161,9 @@ public class Boid {
         	return new V2d(0, 0);
         }
     }
+
+    @Override
+    public Boid clone() {
+        return new Boid(new P2d(pos.x(), pos.y()), new V2d(vel.x(), vel.y()));
+    }
 }
