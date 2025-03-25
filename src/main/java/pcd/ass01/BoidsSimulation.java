@@ -1,6 +1,8 @@
 package pcd.ass01;
 
 import javax.swing.*;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 public class BoidsSimulation {
 
@@ -17,10 +19,11 @@ public class BoidsSimulation {
     static final double AVOID_RADIUS = 20.0;
 
 	final static int SCREEN_WIDTH = 800; 
-	final static int SCREEN_HEIGHT = 800; 
-	
+	final static int SCREEN_HEIGHT = 800;
+	public static final int DIVISION_FACTOR = 200;
 
-    public static void main(String[] args) {
+
+	public static void main(String[] args) {
 
 		String input = JOptionPane.showInputDialog(null, "Insert boids count:", "Configuration", JOptionPane.QUESTION_MESSAGE);
 
@@ -32,7 +35,9 @@ public class BoidsSimulation {
 				boids = Integer.parseInt(input);
 			}
 
-			SimulationStateMonitor startMonitor = new SimulationStateMonitor(false);
+			SimulationStateMonitor stateMonitor = new SimulationStateMonitor(false);
+			SyncWorkersMonitor syncMonitor = new SyncWorkersMonitor(boids);
+
 
 			var model = new BoidsModel(
 					boids,
@@ -41,9 +46,16 @@ public class BoidsSimulation {
 					MAX_SPEED,
 					PERCEPTION_RADIUS,
 					AVOID_RADIUS);
-			var sim = new BoidsSimulator(model, startMonitor);
-			var view = new BoidsView(model, startMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
+			var sim = new BoidsSimulator(model, stateMonitor, syncMonitor);
+			var view = new BoidsView(model, stateMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
 			sim.attachView(view);
+
+			CyclicBarrier barrier = new CyclicBarrier(boids);
+
+			for (Boid b : model.getBoids()) {
+				Thread.ofVirtual().start(new Worker(b, model, stateMonitor, barrier, syncMonitor));
+			}
+
 			sim.runSimulation();
 		} catch (Exception ex) {
 			System.out.println("Input error: integer required");
