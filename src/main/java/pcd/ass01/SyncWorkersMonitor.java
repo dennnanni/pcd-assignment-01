@@ -15,7 +15,7 @@ public class SyncWorkersMonitor {
                 notifyAll();
             }
 
-            if (finishedCount != 0) {
+            while (finishedCount != 0) {
                 wait();
             }
         } catch (InterruptedException e) {

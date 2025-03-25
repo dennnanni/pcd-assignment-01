@@ -53,7 +53,7 @@ public class BoidsSimulation {
 			CyclicBarrier barrier = new CyclicBarrier(nWorkers);
 
 			for (int i = 0; i < boids; i += DIVISION_FACTOR) {
-				int controlledBoids = (boids - i) % DIVISION_FACTOR != 0 ? (boids - i) : DIVISION_FACTOR;
+				int controlledBoids = i + DIVISION_FACTOR <= boids ? DIVISION_FACTOR : (boids - i);
 				Worker worker = new Worker(i, controlledBoids, model, stateMonitor, barrier, syncMonitor);
 				worker.start();
 			}
