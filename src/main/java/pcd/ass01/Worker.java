@@ -37,12 +37,9 @@ public class Worker extends Thread {
                 boids.get(i).updateVelocity(model);
             }
 
-            // Barriera 1
             try {
                 barrier.await();
-            } catch (InterruptedException | BrokenBarrierException ex) {
-
-            }
+            } catch (InterruptedException | BrokenBarrierException ex) {}
 
             for (int i = boidIndex; i < boidIndex + controlledBoids; i++) {
                 boids.get(i).updatePos(model);
@@ -50,6 +47,7 @@ public class Worker extends Thread {
 
             coordinatorMonitor.workDoneWaitCoordinator();
         }
+
     }
 }
 

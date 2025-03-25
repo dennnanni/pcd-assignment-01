@@ -1,58 +1,38 @@
 package pcd.ass01;
 
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 public class SyncWorkersMonitor {
+    private final int totalWorkers;
+    private int finishedCount = 0;
 
-    private final Lock lock = new ReentrantLock();
-    private final Condition workersDone = lock.newCondition();
-    private final Condition coordinatorDone = lock.newCondition();
-
-    private final int nWorkers;
-    private int nWorkersDone;
-    private boolean coordinatorWorking;
-
-    public SyncWorkersMonitor(int nWorkers) {
-        this.nWorkers = nWorkers;
-    }
-
-    public void waitWorkers() {
-        lock.lock();
-        try {
-            while (nWorkersDone < nWorkers)
-                workersDone.await();
-
-            coordinatorWorking = true;
-            nWorkersDone = 0;
-        } catch (InterruptedException ex){
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    public void coordinatorDone() {
-        lock.lock();
-        coordinatorWorking = false;
-        coordinatorDone.signalAll();
-        lock.unlock();
+    public SyncWorkersMonitor(int totalWorkers) {
+        this.totalWorkers = totalWorkers;
     }
 
     public synchronized void workDoneWaitCoordinator() {
-        lock.lock();
         try {
-            nWorkersDone++;
-            if (nWorkersDone == nWorkers) {
-                workersDone.signal();
+            finishedCount++;
+            if (finishedCount == totalWorkers) {
+                notifyAll();
             }
 
-            while (coordinatorWorking) {
-                coordinatorDone.await();
+            if (finishedCount != 0) {
+                wait();
             }
-        } catch (InterruptedException ex) {
-        } finally {
-            lock.unlock();
+        } catch (InterruptedException e) {
         }
+    }
+
+    public synchronized void waitWorkers() {
+        try {
+            while (finishedCount < totalWorkers) {
+                wait();
+            }
+        } catch (InterruptedException e) {
+        }
+    }
+
+    public synchronized void coordinatorDone() {
+        finishedCount = 0;
+        notifyAll();
     }
 }
