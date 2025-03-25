@@ -19,7 +19,7 @@ public class BoidsSimulation {
 
 	final static int SCREEN_WIDTH = 800; 
 	final static int SCREEN_HEIGHT = 800;
-	public static final int DIVISION_FACTOR = 200;
+	public static final int N_THREADS = Runtime.getRuntime().availableProcessors() + 1;
 
 
 	public static void main(String[] args) {
@@ -33,10 +33,9 @@ public class BoidsSimulation {
 			} else {
 				boids = Integer.parseInt(input);
 			}
-
-			int nWorkers = (int) Math.ceil(boids / (double) DIVISION_FACTOR);
+			
 			SimulationStateMonitor stateMonitor = new SimulationStateMonitor(false);
-			SyncWorkersMonitor syncMonitor = new SyncWorkersMonitor(nWorkers);
+			SyncWorkersMonitor syncMonitor = new SyncWorkersMonitor(N_THREADS);
 
 
 			var model = new BoidsModel(
@@ -50,10 +49,12 @@ public class BoidsSimulation {
 			var view = new BoidsView(model, stateMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
 			sim.attachView(view);
 
-			CyclicBarrier barrier = new CyclicBarrier(nWorkers);
+			CyclicBarrier barrier = new CyclicBarrier(N_THREADS);
 
-			for (int i = 0; i < boids; i += DIVISION_FACTOR) {
-				int controlledBoids = i + DIVISION_FACTOR <= boids ? DIVISION_FACTOR : (boids - i);
+			int divisionFactor = boids / N_THREADS + 1;
+			System.out.println("Division factor: " + divisionFactor);
+			for (int i = 0; i < boids; i += divisionFactor) {
+				int controlledBoids = i + divisionFactor <= boids ? divisionFactor : (boids - i);
 				Worker worker = new Worker(i, controlledBoids, model, stateMonitor, barrier, syncMonitor);
 				worker.start();
 			}
