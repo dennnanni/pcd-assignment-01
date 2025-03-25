@@ -52,7 +52,6 @@ public class BoidsSimulation {
 			CyclicBarrier barrier = new CyclicBarrier(N_THREADS);
 
 			int divisionFactor = boids / N_THREADS + 1;
-			System.out.println("Division factor: " + divisionFactor);
 			for (int i = 0; i < boids; i += divisionFactor) {
 				int controlledBoids = i + divisionFactor <= boids ? divisionFactor : (boids - i);
 				Worker worker = new Worker(i, controlledBoids, model, stateMonitor, barrier, syncMonitor);
