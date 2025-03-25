@@ -71,27 +71,27 @@ public class BoidsModel {
     	return height;
     }
 
-    public void setSeparationWeight(double value) {
+    public synchronized void setSeparationWeight(double value) {
     	this.separationWeight = value;
     }
 
-    public void setAlignmentWeight(double value) {
+    public synchronized void setAlignmentWeight(double value) {
     	this.alignmentWeight = value;
     }
 
-    public void setCohesionWeight(double value) {
+    public synchronized void setCohesionWeight(double value) {
     	this.cohesionWeight = value;
     }
 
-    public double getSeparationWeight() {
+    public synchronized double getSeparationWeight() {
     	return separationWeight;
     }
 
-    public double getCohesionWeight() {
+    public synchronized double getCohesionWeight() {
     	return cohesionWeight;
     }
 
-    public double getAlignmentWeight() {
+    public synchronized double getAlignmentWeight() {
     	return alignmentWeight;
     }
     
