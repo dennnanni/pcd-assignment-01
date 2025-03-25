@@ -1,12 +1,20 @@
 package pcd.ass01;
 
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class BoidsSimulator {
+
+    private static final int NTHREADS = Runtime.getRuntime().availableProcessors() + 1 ;
 
     private final SimulationStateMonitor monitor;
     private BoidsModel model;
     private Optional<BoidsView> view;
+    private Executor executor;
+    private CountDownLatch taskCounter;
     
     private static final int FRAMERATE = 25;
     private int framerate;
@@ -15,10 +23,8 @@ public class BoidsSimulator {
         this.model = model;
         view = Optional.empty();
         this.monitor = monitor;
-
-        /*
-        Qui magari mettiamo la creazione degli agenti che si muovono?
-         */
+        this.executor = Executors.newFixedThreadPool(NTHREADS);
+        this.taskCounter = new CountDownLatch(model.getBoids().size());
     }
 
     public void attachView(BoidsView view) {
@@ -30,29 +36,29 @@ public class BoidsSimulator {
             this.monitor.waitIfPaused();
             var t0 = System.currentTimeMillis();
     		var boids = model.getBoids();
-    		/*
-    		for (Boid boid : boids) {
-                boid.update(model);
-            }
-            */
-    		
-    		/* 
-    		 * Improved correctness: first update velocities...
-    		 */
-    		for (Boid boid : boids) {
-                boid.updateVelocity(model);
+
+            for (Boid b : boids) {
+                this.executor.execute(new UpdateVelocityTask(b, model, taskCounter));
             }
 
-    		/* 
-    		 * ..then update positions
-    		 */
-    		for (Boid boid : boids) {
-                boid.updatePos(model);
+            try {
+                taskCounter.await();
+            } catch (InterruptedException ex) {
+
+            } finally {
+                taskCounter = new CountDownLatch(boids.size());
             }
 
-            // Qui ci deve essere un meccanismo di sincronizzazione perché tutti i boid devono
-            // aver finito gli aggiornamenti prima di poter disegnare l'interfaccia e capire se
-            // bisogna aspettare per iniziare il ciclo successivo.
+            for (Boid b : boids) {
+                this.executor.execute(new UpdatePositionTask(b, model, taskCounter));
+            }
+
+            try {
+                taskCounter.await();
+            } catch (InterruptedException ex) {
+
+            }
+
     		if (view.isPresent()) {
             	view.get().update(framerate);
             	var t1 = System.currentTimeMillis();
