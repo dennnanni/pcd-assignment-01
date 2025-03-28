@@ -13,7 +13,7 @@ public class BoidsSimulator {
     private BoidsModel model;
     private Optional<BoidsView> view;
     private Executor executor;
-    private CountDownLatch taskCounter;
+    private Latch taskCounter;
     
     private static final int FRAMERATE = 25;
     private int framerate;
@@ -23,7 +23,7 @@ public class BoidsSimulator {
         view = Optional.empty();
         this.monitor = monitor;
         this.executor = Executors.newFixedThreadPool(NTHREADS);
-        this.taskCounter = new CountDownLatch(model.getBoids().size());
+        this.taskCounter = new Latch(model.getBoids().size());
     }
 
     public void attachView(BoidsView view) {
@@ -43,9 +43,8 @@ public class BoidsSimulator {
             try {
                 taskCounter.await();
             } catch (InterruptedException ex) {
-
             } finally {
-                taskCounter = new CountDownLatch(boids.size());
+                taskCounter = new Latch(boids.size());
             }
 
             for (Boid b : boids) {
@@ -55,7 +54,6 @@ public class BoidsSimulator {
             try {
                 taskCounter.await();
             } catch (InterruptedException ex) {
-
             }
 
             model.makeCopy();
