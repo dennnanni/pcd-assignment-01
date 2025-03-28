@@ -22,31 +22,17 @@ public class BoidsSimulation {
 
     public static void main(String[] args) {
 
-		String input = JOptionPane.showInputDialog(null, "Insert boids count:", "Configuration", JOptionPane.QUESTION_MESSAGE);
+		SimulationStateMonitor startMonitor = new SimulationStateMonitor();
 
-		try {
-			int boids;
-			if (input.isEmpty()) {
-				boids = N_BOIDS;
-			} else {
-				boids = Integer.parseInt(input);
-			}
-
-			SimulationStateMonitor startMonitor = new SimulationStateMonitor(false);
-
-			var model = new BoidsModel(
-					boids,
-					SEPARATION_WEIGHT, ALIGNMENT_WEIGHT, COHESION_WEIGHT,
-					ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
-					MAX_SPEED,
-					PERCEPTION_RADIUS,
-					AVOID_RADIUS);
-			var sim = new BoidsSimulator(model, startMonitor);
-			var view = new BoidsView(model, startMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
-			sim.attachView(view);
-			sim.runSimulation();
-		} catch (Exception ex) {
-			System.out.println("Input error: integer required");
-		}
+		var model = new BoidsModel(
+				SEPARATION_WEIGHT, ALIGNMENT_WEIGHT, COHESION_WEIGHT,
+				ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
+				MAX_SPEED,
+				PERCEPTION_RADIUS,
+				AVOID_RADIUS);
+		var sim = new BoidsSimulator(model, startMonitor);
+		var view = new BoidsView(model, startMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
+		sim.attachView(view);
+		sim.runSimulation();
     }
 }
