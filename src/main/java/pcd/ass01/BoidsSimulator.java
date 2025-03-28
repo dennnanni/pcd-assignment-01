@@ -33,12 +33,12 @@ public class BoidsSimulator {
             model.makeCopy();
 
     		if (view.isPresent()) {
-                view.get().update(framerate);
+            	view.get().update(framerate);
             	var t1 = System.currentTimeMillis();
                 var dtElapsed = t1 - t0;
                 var framratePeriod = 1000/FRAMERATE;
-
-                if (dtElapsed < framratePeriod) {
+                
+                if (dtElapsed < framratePeriod) {		
                 	try {
                 		Thread.sleep(framratePeriod - dtElapsed);
                 	} catch (Exception ex) {}
