@@ -1,8 +1,6 @@
 package pcd.ass01;
 
 import javax.swing.*;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 
 public class BoidsSimulation {
 
@@ -50,7 +48,7 @@ public class BoidsSimulation {
 			var view = new BoidsView(model, stateMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
 			sim.attachView(view);
 
-			CyclicBarrier barrier = new CyclicBarrier(boids);
+			Barrier barrier = new Barrier(boids);
 
 			for (Boid b : model.getBoids()) {
 				Thread.ofVirtual().start(new Worker(b, model, stateMonitor, barrier, syncMonitor));
