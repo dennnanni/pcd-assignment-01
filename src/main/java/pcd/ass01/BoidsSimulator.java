@@ -29,6 +29,7 @@ public class BoidsSimulator {
             var t0 = System.currentTimeMillis();
 
             workersMonitor.waitWorkers();
+            System.out.println("Workers arrivati");
 
             model.makeCopy();
 
@@ -49,6 +50,7 @@ public class BoidsSimulator {
     		}
 
             workersMonitor.coordinatorDone();
+            System.out.println("Aspettando i workers");
 
     	}
     }

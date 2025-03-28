@@ -8,7 +8,7 @@ public class Worker extends Thread {
     private final BoidsModel model;
     private final SimulationStateMonitor stateMonitor;
     private final SyncWorkersMonitor coordinatorMonitor;
-    private final CyclicBarrier barrier;
+    private final Barrier barrier;
 
     private final int boidIndex;
     private final int controlledBoids;
@@ -17,7 +17,7 @@ public class Worker extends Thread {
                   int controlledBoids,
                   BoidsModel model,
                   SimulationStateMonitor stateMonitor,
-                  CyclicBarrier barrier,
+                  Barrier barrier,
                   SyncWorkersMonitor coordinatorMonitor){
         this.boidIndex = boidIndex;
         this.controlledBoids = controlledBoids;
@@ -37,14 +37,16 @@ public class Worker extends Thread {
                 boids.get(i).updateVelocity(model);
             }
 
+            System.out.println("[Thread " + boidIndex + "]: arrivato alla barriera");
             try {
                 barrier.await();
-            } catch (InterruptedException | BrokenBarrierException ex) {}
+            } catch (InterruptedException ex) {}
 
             for (int i = boidIndex; i < boidIndex + controlledBoids; i++) {
                 boids.get(i).updatePos(model);
             }
 
+            System.out.println("[Thread " + boidIndex + "]: ciclo finito");
             coordinatorMonitor.workDoneWaitCoordinator();
         }
 

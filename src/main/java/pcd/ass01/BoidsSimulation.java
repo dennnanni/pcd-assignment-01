@@ -49,7 +49,7 @@ public class BoidsSimulation {
 			var view = new BoidsView(model, stateMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
 			sim.attachView(view);
 
-			CyclicBarrier barrier = new CyclicBarrier(N_THREADS);
+			Barrier barrier = new Barrier(N_THREADS);
 
 			int divisionFactor = boids / N_THREADS + 1;
 			for (int i = 0; i < boids; i += divisionFactor) {
