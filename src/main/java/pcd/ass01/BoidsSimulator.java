@@ -25,7 +25,9 @@ public class BoidsSimulator {
       
     public void runSimulation() {
     	while (true) {
-            stateMonitor.waitIfPaused();
+            try {
+                this.stateMonitor.waitIfPausedOrStopped();
+            } catch (InterruptedException ex) {}
             var t0 = System.currentTimeMillis();
 
             workersMonitor.waitWorkers();

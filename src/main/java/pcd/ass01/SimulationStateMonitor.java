@@ -2,10 +2,12 @@ package pcd.ass01;
 
 public class SimulationStateMonitor {
 
+    private boolean stopped;
     private boolean paused;
 
-    public SimulationStateMonitor(boolean paused) {
-        this.paused = paused;
+    public SimulationStateMonitor() {
+        this.stopped = true;
+        this.paused = false;
     }
 
     public synchronized boolean isPaused() {
@@ -17,17 +19,30 @@ public class SimulationStateMonitor {
     }
 
     public synchronized void resume() {
+        if (!stopped) {
+            this.paused = false;
+            notifyAll();
+        }
+    }
+
+    public synchronized void waitIfPausedOrStopped() throws InterruptedException {
+        while (this.paused || this.stopped) {
+            wait();
+        }
+    }
+
+    public synchronized boolean isStopped() {
+        return this.stopped;
+    }
+
+    public synchronized void start() {
+        this.stopped = false;
         this.paused = false;
         notifyAll();
     }
 
-    public synchronized void waitIfPaused() {
-        while (this.paused) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-
-            }
-        }
+    public synchronized void stop() throws InterruptedException {
+        this.stopped = true;
+        this.paused = true;
     }
 }

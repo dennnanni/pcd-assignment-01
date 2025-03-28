@@ -1,7 +1,6 @@
 package pcd.ass01;
 
 import javax.swing.*;
-import java.util.concurrent.CyclicBarrier;
 
 public class BoidsSimulation {
 
@@ -24,43 +23,28 @@ public class BoidsSimulation {
 
 	public static void main(String[] args) {
 
-		String input = JOptionPane.showInputDialog(null, "Insert boids count:", "Configuration", JOptionPane.QUESTION_MESSAGE);
+        SimulationStateMonitor stateMonitor = new SimulationStateMonitor(false);
+        SyncWorkersMonitor syncMonitor = new SyncWorkersMonitor(N_THREADS);
 
-		try {
-			int boids;
-			if (input.isEmpty()) {
-				boids = N_BOIDS;
-			} else {
-				boids = Integer.parseInt(input);
-			}
-			
-			SimulationStateMonitor stateMonitor = new SimulationStateMonitor(false);
-			SyncWorkersMonitor syncMonitor = new SyncWorkersMonitor(N_THREADS);
+		var model = new BoidsModel(
+				SEPARATION_WEIGHT, ALIGNMENT_WEIGHT, COHESION_WEIGHT,
+				ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
+				MAX_SPEED,
+				PERCEPTION_RADIUS,
+				AVOID_RADIUS);
+		var sim = new BoidsSimulator(model, stateMonitor, syncMonitor);
+		var view = new BoidsView(model, stateMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
+		sim.attachView(view);
 
+		Barrier barrier = new Barrier(N_THREADS);
 
-			var model = new BoidsModel(
-					boids,
-					SEPARATION_WEIGHT, ALIGNMENT_WEIGHT, COHESION_WEIGHT,
-					ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
-					MAX_SPEED,
-					PERCEPTION_RADIUS,
-					AVOID_RADIUS);
-			var sim = new BoidsSimulator(model, stateMonitor, syncMonitor);
-			var view = new BoidsView(model, stateMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
-			sim.attachView(view);
-
-			Barrier barrier = new Barrier(N_THREADS);
-
-			int divisionFactor = boids / N_THREADS + 1;
-			for (int i = 0; i < boids; i += divisionFactor) {
-				int controlledBoids = i + divisionFactor <= boids ? divisionFactor : (boids - i);
-				Worker worker = new Worker(i, controlledBoids, model, stateMonitor, barrier, syncMonitor);
-				worker.start();
-			}
-
-			sim.runSimulation();
-		} catch (Exception ex) {
-			System.out.println("Input error: integer required");
+		int divisionFactor = boids / N_THREADS + 1;
+		for (int i = 0; i < boids; i += divisionFactor) {
+			int controlledBoids = i + divisionFactor <= boids ? divisionFactor : (boids - i);
+			Worker worker = new Worker(i, controlledBoids, model, stateMonitor, barrier, syncMonitor);
+			worker.start();
 		}
+
+		sim.runSimulation();
     }
 }
