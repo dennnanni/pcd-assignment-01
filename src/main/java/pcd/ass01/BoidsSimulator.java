@@ -32,7 +32,9 @@ public class BoidsSimulator {
       
     public void runSimulation() {
     	while (true) {
-            this.monitor.waitIfPaused();
+            try {
+                this.monitor.waitIfPausedOrStopped();
+            } catch (InterruptedException ex) {}
             var t0 = System.currentTimeMillis();
     		var boids = model.getBoids();
 
