@@ -8,6 +8,7 @@ public class Worker extends Thread {
     private final Barrier barrier;
 
     private final Boid boid;
+    private boolean isRunning = true;
 
     public Worker(Boid boid,
                   BoidsModel model,
@@ -23,8 +24,11 @@ public class Worker extends Thread {
 
     @Override
     public void run() {
-        while (true) {
-            stateMonitor.waitIfPaused();
+        while (isRunning) {
+            try {
+                stateMonitor.waitIfPausedOrStopped();
+            } catch (InterruptedException e) {
+            }
             boid.updateVelocity(model);
 
             try {
@@ -35,6 +39,11 @@ public class Worker extends Thread {
             coordinatorMonitor.workDoneWaitCoordinator();
         }
 
+    }
+
+    @Override
+    public void interrupt() {
+        isRunning = false;
     }
 }
 
