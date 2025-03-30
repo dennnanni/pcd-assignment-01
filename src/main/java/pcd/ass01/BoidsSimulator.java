@@ -1,7 +1,6 @@
 package pcd.ass01;
 
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -23,7 +22,6 @@ public class BoidsSimulator {
         view = Optional.empty();
         this.monitor = monitor;
         this.executor = Executors.newFixedThreadPool(NTHREADS);
-        this.taskCounter = new Latch(model.getBoids().size());
     }
 
     public void attachView(BoidsView view) {
@@ -35,8 +33,10 @@ public class BoidsSimulator {
             try {
                 this.monitor.waitIfPausedOrStopped();
             } catch (InterruptedException ex) {}
+
             var t0 = System.currentTimeMillis();
     		var boids = model.getBoids();
+            taskCounter = new Latch(boids.size());
 
             for (Boid b : boids) {
                 this.executor.execute(new UpdateVelocityTask(b, model, taskCounter));
