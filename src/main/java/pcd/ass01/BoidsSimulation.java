@@ -23,7 +23,7 @@ public class BoidsSimulation {
 
 	public static void main(String[] args) {
 
-        SimulationStateMonitor stateMonitor = new SimulationStateMonitor(false);
+        SimulationStateMonitor stateMonitor = new SimulationStateMonitor();
         SyncWorkersMonitor syncMonitor = new SyncWorkersMonitor(N_THREADS);
 
 		var model = new BoidsModel(
@@ -35,16 +35,6 @@ public class BoidsSimulation {
 		var sim = new BoidsSimulator(model, stateMonitor, syncMonitor);
 		var view = new BoidsView(model, stateMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
 		sim.attachView(view);
-
-		Barrier barrier = new Barrier(N_THREADS);
-
-		int divisionFactor = boids / N_THREADS + 1;
-		for (int i = 0; i < boids; i += divisionFactor) {
-			int controlledBoids = i + divisionFactor <= boids ? divisionFactor : (boids - i);
-			Worker worker = new Worker(i, controlledBoids, model, stateMonitor, barrier, syncMonitor);
-			worker.start();
-		}
-
 		sim.runSimulation();
     }
 }

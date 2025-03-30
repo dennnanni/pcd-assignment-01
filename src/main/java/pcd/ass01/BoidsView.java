@@ -78,13 +78,11 @@ public class BoidsView implements ChangeListener {
 		startButton.addActionListener(e -> {
 			String input = boidsNumberField.getText();
 			if (checkInput(input) && monitor.isStopped()) {
-
 				model.createBoids(Integer.parseInt(input));
 				pauseButton.setEnabled(true);
 				monitor.start();
 				boidsPanel = new BoidsPanel(this, model);
 				cp.add(BorderLayout.CENTER, boidsPanel);
-
 			} else if (!monitor.isStopped()) {
 				try {
 					monitor.stop();

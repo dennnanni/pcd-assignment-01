@@ -12,6 +12,7 @@ public class Worker extends Thread {
 
     private final int boidIndex;
     private final int controlledBoids;
+    private boolean isRunning = true;
 
     public Worker(int boidIndex,
                   int controlledBoids,
@@ -29,27 +30,36 @@ public class Worker extends Thread {
 
     @Override
     public void run() {
-        while (true) {
-            stateMonitor.waitIfPaused();
+        while (isRunning) {
+            try {
+                stateMonitor.waitIfPausedOrStopped();
+            } catch (InterruptedException ex) {
+                break;
+            }
+
             var boids = model.getBoids();
 
             for (int i = boidIndex; i < boidIndex + controlledBoids; i++) {
                 boids.get(i).updateVelocity(model);
             }
 
-            System.out.println("[Thread " + boidIndex + "]: arrivato alla barriera");
             try {
                 barrier.await();
-            } catch (InterruptedException ex) {}
+            } catch (InterruptedException ex) {
+                break;
+            }
 
             for (int i = boidIndex; i < boidIndex + controlledBoids; i++) {
                 boids.get(i).updatePos(model);
             }
 
-            System.out.println("[Thread " + boidIndex + "]: ciclo finito");
             coordinatorMonitor.workDoneWaitCoordinator();
         }
+    }
 
+    @Override
+    public void interrupt() {
+        isRunning = false;
     }
 }
 
