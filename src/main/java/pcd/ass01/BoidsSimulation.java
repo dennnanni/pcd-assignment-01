@@ -17,46 +17,22 @@ public class BoidsSimulation {
     static final double AVOID_RADIUS = 20.0;
 
 	final static int SCREEN_WIDTH = 800; 
-	final static int SCREEN_HEIGHT = 800;
-	public static final int DIVISION_FACTOR = 200;
-
+	final static int SCREEN_HEIGHT = 800; 
+	
 
 	public static void main(String[] args) {
 
-		String input = JOptionPane.showInputDialog(null, "Insert boids count:", "Configuration", JOptionPane.QUESTION_MESSAGE);
+		SimulationStateMonitor stateMonitor = new SimulationStateMonitor();
 
-		try {
-			int boids;
-			if (input.isEmpty()) {
-				boids = N_BOIDS;
-			} else {
-				boids = Integer.parseInt(input);
-			}
-
-			SimulationStateMonitor stateMonitor = new SimulationStateMonitor(false);
-			SyncWorkersMonitor syncMonitor = new SyncWorkersMonitor(boids);
-
-
-			var model = new BoidsModel(
-					boids,
-					SEPARATION_WEIGHT, ALIGNMENT_WEIGHT, COHESION_WEIGHT,
-					ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
-					MAX_SPEED,
-					PERCEPTION_RADIUS,
-					AVOID_RADIUS);
-			var sim = new BoidsSimulator(model, stateMonitor, syncMonitor);
-			var view = new BoidsView(model, stateMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
-			sim.attachView(view);
-
-			Barrier barrier = new Barrier(boids);
-
-			for (Boid b : model.getBoids()) {
-				Thread.ofVirtual().start(new Worker(b, model, stateMonitor, barrier, syncMonitor));
-			}
-
-			sim.runSimulation();
-		} catch (Exception ex) {
-			System.out.println("Input error: integer required");
-		}
+		var model = new BoidsModel(
+				SEPARATION_WEIGHT, ALIGNMENT_WEIGHT, COHESION_WEIGHT,
+				ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT,
+				MAX_SPEED,
+				PERCEPTION_RADIUS,
+				AVOID_RADIUS);
+		var sim = new BoidsSimulator(model, stateMonitor);
+		var view = new BoidsView(model, stateMonitor, SCREEN_WIDTH, SCREEN_HEIGHT);
+		sim.attachView(view);
+		sim.runSimulation();
     }
 }
