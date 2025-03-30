@@ -1,8 +1,5 @@
 package pcd.ass01;
 
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-
 public class Worker extends Thread {
 
     private final BoidsModel model;
