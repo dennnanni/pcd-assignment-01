@@ -77,7 +77,7 @@ public class BoidsSimulator {
         Barrier barrier = new Barrier(nThreads);
         var boids = model.getBoids();
 		for (Boid b : boids) {
-           Thread.ofVirtual().start(new Worker(b, model, stateMonitor, barrier, workersMonitor));
+           workers.add(Thread.startVirtualThread(new Worker(b, model, stateMonitor, barrier, workersMonitor)));
         }
     }
 }
