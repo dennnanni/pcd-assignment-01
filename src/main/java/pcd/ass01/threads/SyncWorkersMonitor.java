@@ -1,4 +1,4 @@
-package pcd.ass01;
+package pcd.ass01.threads;
 
 public class SyncWorkersMonitor {
     private final int totalWorkers;

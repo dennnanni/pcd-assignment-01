@@ -1,25 +1,22 @@
-package pcd.ass01;
+package pcd.ass01.threads;
 
-public class Latch {
+public class Barrier {
 
     private final int workersCount;
     private int counter;
 
-    public Latch(int workersCount) {
+    public Barrier(int workersCount) {
         this.workersCount = workersCount;
         this.counter = workersCount;
     }
 
-    public synchronized void countDown() {
-        counter--;
-
-        if (counter == 0) {
-            notify();
-        }
-    }
     public synchronized void await() throws InterruptedException {
+        counter--;
         if (counter > 0) {
             wait();
+        } else {
+            counter = workersCount;
+            notifyAll();
         }
     }
 }
