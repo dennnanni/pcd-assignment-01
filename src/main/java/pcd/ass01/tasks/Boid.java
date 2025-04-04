@@ -1,4 +1,4 @@
-package pcd.ass01;
+package pcd.ass01.tasks;
 
 import java.util.ArrayList;
 import java.util.List;

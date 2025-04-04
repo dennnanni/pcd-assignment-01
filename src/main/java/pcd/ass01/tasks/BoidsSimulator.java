@@ -1,4 +1,4 @@
-package pcd.ass01;
+package pcd.ass01.tasks;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;

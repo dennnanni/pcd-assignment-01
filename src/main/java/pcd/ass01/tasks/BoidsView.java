@@ -1,4 +1,4 @@
-package pcd.ass01;
+package pcd.ass01.tasks;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
