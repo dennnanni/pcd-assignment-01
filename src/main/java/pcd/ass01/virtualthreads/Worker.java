@@ -1,4 +1,4 @@
-package pcd.ass01;
+package pcd.ass01.virtualthreads;
 
 public class Worker extends Thread {
 

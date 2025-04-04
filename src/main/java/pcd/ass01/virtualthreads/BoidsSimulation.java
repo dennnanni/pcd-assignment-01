@@ -1,6 +1,4 @@
-package pcd.ass01;
-
-import javax.swing.*;
+package pcd.ass01.virtualthreads;
 
 public class BoidsSimulation {
 

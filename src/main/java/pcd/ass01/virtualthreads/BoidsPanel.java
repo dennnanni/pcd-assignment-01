@@ -1,4 +1,4 @@
-package pcd.ass01;
+package pcd.ass01.virtualthreads;
 
 import javax.swing.*;
 import java.awt.*;

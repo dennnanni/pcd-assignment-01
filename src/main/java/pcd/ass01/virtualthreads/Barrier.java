@@ -1,4 +1,4 @@
-package pcd.ass01;
+package pcd.ass01.virtualthreads;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
