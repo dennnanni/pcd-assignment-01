@@ -50,12 +50,17 @@ public class Worker extends Thread {
                 boids.get(i).updatePos(model);
             }
 
-            coordinatorMonitor.workDoneWaitCoordinator();
+            try {
+                coordinatorMonitor.workDoneWaitCoordinator();
+            } catch (InterruptedException e) {
+                break;
+            }
         }
     }
 
     @Override
     public void interrupt() {
+        super.interrupt();
         isRunning = false;
     }
 }

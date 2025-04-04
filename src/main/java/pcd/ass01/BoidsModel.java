@@ -47,7 +47,7 @@ public class BoidsModel {
         makeCopy();
     }
     
-    public synchronized List<Boid> getBoids(){
+    public List<Boid> getBoids(){
     	return boids;
     }
     

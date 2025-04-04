@@ -8,17 +8,15 @@ public class SyncWorkersMonitor {
         this.totalWorkers = totalWorkers;
     }
 
-    public synchronized void workDoneWaitCoordinator() {
-        try {
-            finishedCount++;
-            if (finishedCount == totalWorkers) {
-                notifyAll();
-            }
+    public synchronized void workDoneWaitCoordinator() throws InterruptedException {
 
-            while (finishedCount != 0) {
-                wait();
-            }
-        } catch (InterruptedException e) {
+        finishedCount++;
+        if (finishedCount == totalWorkers) {
+            notifyAll();
+        }
+
+        while (finishedCount != 0) {
+            wait();
         }
     }
 
